@@ -23,12 +23,39 @@
 	    firebase.initializeApp(config);
 		
 		var database = firebase.database();
-		
-		
-		
+		var spot = 0;
+		var stories = [8];
+		var titles = [8];
+		var spotToUse = 0;
+
 		function sendLink() {
 			var linkToSend = insertLink.value;
 			database.ref("Link/").set({link:linkToSend});
+		}
+		function addStories() {
+		    database.ref("Stories/").push({
+			    title: "F",
+			    story: "text text text text \nasdf asdf asdf asdf"
+		    });
+		}	
+		function getStories() {
+			setTimeout(function() {
+				var getRef = database.ref("Stories/");
+				getRef.on('child_added', function(snapshot) {
+					stories[spot] = snapshot.val().story;
+					titles[spot] = snapshot.val().title;
+					spot++;
+				});
+			}, 0);
+			
+			appendStories();
+		}
+		function appendStories() {
+			setTimeout(function() {
+				for(var i = 0; i < spot; i++) {
+					$("#toAppendStories").append("<div class='w3-col m3'><a class='clickMe' id='a" + i + "'>" + titles[i] + "</a></div>")
+				}
+			}, 500);
 		}
 		function checkURL() {
 			var reader = new XMLHttpRequest();
@@ -43,6 +70,14 @@
 			}
 			return true;
 		}
+		$(document).on('click', '.clickMe', function() {
+			var theId = event.target.id;
+			var theIdChar = theId.charAt(1);
+			var theIdToSend = parseInt(theIdChar);
+			localStorage.setItem('story', stories[theIdToSend]);
+			document.location.href = "story.html";
+		});
+		getStories();
 		
 	</script>
 
@@ -137,41 +172,10 @@ body, html {
   <p class="w3-center"><em>Here are some of the latest stores submitted by users</em></p><br>
 
   <!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
-  <div class="w3-row-padding w3-center">
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
+  <div class="w3-row-padding w3-center w3-section" id="toAppendStories">
 
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
-
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
-
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
   </div>
 
-  <div class="w3-row-padding w3-center w3-section">
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
-
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
-
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
-
-    <div class="w3-col m3">
-      <p>Lorem ipsum</p>
-    </div>
-  </div>
 </div>
 
 <!-- Modal for full size images on click-->
