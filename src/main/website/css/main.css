@@ -1,0 +1,25 @@
+@charset "UTF-8";
+/* CSS Document */
+
+#insertLink {
+	background-color: #777;
+	outline: none;
+	border: none;
+	border-radius: 2px;
+	width: 700px;
+	height: 50px;
+	font-size: 26px;
+	opacity: .75;
+	color: #000;
+}
+
+#sendLink {
+	background-color: #fff;
+	border: none;
+	outline: none;
+	border-radius: 2px;
+	height: 50px;
+	font-size: 26px;
+	opacity: .75;
+	margin-top: 5px;
+}
