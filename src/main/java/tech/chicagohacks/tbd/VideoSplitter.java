@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
 import io.humble.video.Decoder;
 import io.humble.video.Demuxer;
 import io.humble.video.DemuxerStream;
@@ -37,71 +39,63 @@ public class VideoSplitter {
 	/**
 	 * Splits the video into frames
 	 */
-	public void splitIntoFrames(){
+	public void splitIntoFrames() throws IOException, InterruptedException{
 		Demuxer demuxer = Demuxer.make();
-		try{
-			demuxer.open(videoFilePath, null, false, true, null, null);
-			int numberOfStreams = demuxer.getNumStreams();
+		demuxer.open(videoFilePath, null, false, true, null, null);
+		int numberOfStreams = demuxer.getNumStreams();
+		
+		int streamId = -1;
+		long streamStartTime = 0;
+		Decoder videoDecoder = null;
+		
+		for(int i = 0; i < numberOfStreams; i++){
+			final DemuxerStream stream = demuxer.getStream(i);
+			streamStartTime = stream.getStartTime();
+			final Decoder decoder = stream.getDecoder();
 			
-			int streamId = -1;
-			long streamStartTime = 0;
-			Decoder videoDecoder = null;
-			
-			for(int i = 0; i < numberOfStreams; i++){
-				DemuxerStream stream = demuxer.getStream(i);
-				streamStartTime = stream.getStartTime();
-				videoDecoder = stream.getDecoder();
-				
-				if(videoDecoder != null && videoDecoder.getCodecType() == MediaDescriptor.Type.MEDIA_VIDEO){
-					streamId = i;
-					break;
-				}
+			if(decoder != null && decoder.getCodecType() == MediaDescriptor.Type.MEDIA_VIDEO){
+				streamId = i;
+				videoDecoder = decoder;
+				break;
 			}
-			
-			if(streamId == -1){
-				System.out.println("No stream was found in " + videoFilePath);
-			}
-			
-			videoDecoder.open(null, null);
-			
-			MediaPicture frame = MediaPicture.make(videoDecoder.getWidth(), videoDecoder.getHeight(), videoDecoder.getPixelFormat());
-			MediaPictureConverter converter = MediaPictureConverterFactory.createConverter(MediaPictureConverterFactory.HUMBLE_BGR_24, frame);
-			
-			MediaPacket packet = MediaPacket.make();
-			int offset = 0;
-			int bytesRead = 0;
-			while(demuxer.read(packet) >= 0){
-				if(packet.getStreamIndex() == streamId){
-					offset = 0;
-					bytesRead = 0;
-					
-					do{
-						bytesRead += videoDecoder.decode(frame, packet, offset);
-						if(frame.isComplete()){
-							saveFrameToGoogleCloud(frame, converter);
-						}
-					}while(offset < packet.getSize());
-				}
-			}
-			
-			do{
-				videoDecoder.decode(frame, null, 0);
+		}
+		
+		if(streamId == -1){
+			System.out.println("No stream was found in " + videoFilePath);
+		}
+		
+		videoDecoder.open(null, null);
+		
+		final MediaPicture frame = MediaPicture.make(videoDecoder.getWidth(), videoDecoder.getHeight(), videoDecoder.getPixelFormat());
+		final MediaPictureConverter converter = MediaPictureConverterFactory.createConverter(MediaPictureConverterFactory.HUMBLE_BGR_24, frame);
+		
+		final MediaPacket packet = MediaPacket.make();
 
-				if(frame.isComplete()){
-					saveFrameToGoogleCloud(frame, converter);
-				}
-			} while(frame.isComplete());
-			
-			demuxer.close();
+		while(demuxer.read(packet) >= 0){
+			if(packet.getStreamIndex() == streamId){
+				int offset = 0;
+				int bytesRead = 0;
+				
+				do{
+					bytesRead += videoDecoder.decode(frame, packet, offset);
+					if(frame.isComplete()){
+						saveFrameToGoogleCloud(frame, converter);
+					}
+					
+					offset += bytesRead;
+				}while(offset < packet.getSize());
+			}
 		}
 		
-		catch(IOException ex){
-			System.out.println("uhhhh...");
-		}
-		catch(InterruptedException ex){
-			System.out.println("uuhhhh again...");
-		}
+		do{
+			videoDecoder.decode(frame, null, 0);
+
+			if(frame.isComplete()){
+				saveFrameToGoogleCloud(frame, converter);
+			}
+		} while(frame.isComplete());
 		
+		demuxer.close();
 	}
 	
 	private int framesProcessed = 0;
@@ -114,10 +108,10 @@ public class VideoSplitter {
 		if(framesProcessed % 10 == 0){
 			BufferedImage image = null; 
 			image = converter.toImage(image, picture);
-			++framesProcessed;
 			
-			//TODO: actually write it to Google Cloud
+			//TODO @dash102 - write images to google cloud
 		}
+		++framesProcessed;
 	}
 	
 }
