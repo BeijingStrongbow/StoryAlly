@@ -5,6 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
@@ -56,22 +61,20 @@ public class App {
     		return;
     	}
     	
-    	//process the story
+    	ArrayList<String> frameText = (ArrayList<String>) processFrames();
     	
     	try {
-    		PrintStream out = new PrintStream("resources\\out.txt");
-			final File f = new File("resources\\frames");
-			for(File child : f.listFiles()) {
-				DetectText.uploadFile(child, "bucket-caption");
-				DetectText.detectTextGcs("gs://bucket-caption/" + child.getName(), out);
-				out.println();
+			PrintWriter output = new PrintWriter("resources\\out.txt");
+			
+			for(String s : frameText){
+				output.println(s);
 			}
 			
-			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
-		} catch (IOException e) {
-			System.out.println("Uploading and detecting text did not work");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-    	//String story = "test meme asdf haha";
+    	
     	String story = "";
     	String current = "";
     	BufferedReader br = null;
@@ -105,6 +108,38 @@ public class App {
     public static FirebaseConnection getFirebaseConnection(){
     	return firebase;
     }
+    
+    public static List<String> processFrames(){
+		List<String> messages = new ArrayList<String>();
+		BlockingQueue<String> imagesToProcess = new LinkedBlockingQueue<String>();
+		int currentNumMessages = 0;
+		
+		try {
+			final File f = new File("resources\\frames");
+			for(File child : f.listFiles()) {
+				DetectText.uploadFile(child, "bucket-caption");
+				imagesToProcess.add("gs://bucket-caption/" + child.getName());
+				
+				if(messages.size() > currentNumMessages){
+					String process = imagesToProcess.poll();
+					if(process == null){
+						break;
+					}
+					
+					DetectText.detectTextGcs(process, messages);
+				}
+				
+				currentNumMessages = messages.size();
+			}
+			
+			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
+		} catch (IOException e) {
+			System.out.println("Uploading and detecting text did not work");
+			return null;
+		}
+		
+		return messages;
+	}
     
     public static class FileTest implements FilenameFilter {
     	public boolean accept(File dir, String name) {
