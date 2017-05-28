@@ -37,36 +37,4 @@ public class VideoDownloader {
 		downloader.download();
 		System.out.println("here3");
 	}
-	
-	public static List<String> processFrames(){
-		List<String> messages = new ArrayList<String>();
-		BlockingQueue<String> imagesToProcess = new LinkedBlockingQueue<String>();
-		int currentNumMessages = 0;
-		
-		try {
-			final File f = new File("resources\\frames");
-			for(File child : f.listFiles()) {
-				DetectText.uploadFile(child, "bucket-caption");
-				imagesToProcess.add("gs://bucket-caption/" + child.getName());
-				
-				if(messages.size() > currentNumMessages){
-					String process = imagesToProcess.poll();
-					if(process == null){
-						break;
-					}
-					
-					DetectText.detectTextGcs(process, messages);
-				}
-				
-				currentNumMessages = messages.size();
-			}
-			
-			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
-		} catch (IOException e) {
-			System.out.println("Uploading and detecting text did not work");
-			return null;
-		}
-		
-		return messages;
-	}
 }
