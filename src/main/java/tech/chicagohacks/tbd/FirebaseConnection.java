@@ -55,6 +55,7 @@ public class FirebaseConnection {
 				String url = (String) snapshot.getValue();
 				System.out.println(url);
 				App.setVideoUrl(url);
+				//App.setVideoUrl("https://www.youtube.com/watch?v=Vd3K03LaW5U");
 			}
 		});
 	}
