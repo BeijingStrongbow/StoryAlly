@@ -23,7 +23,6 @@ import io.humble.video.awt.MediaPictureConverterFactory;
 public class VideoSplitter {
 	
 	private String saveLocation;
-	
 	private String videoFilePath;
 	
 	/**
@@ -32,8 +31,8 @@ public class VideoSplitter {
 	 * @param saveLocation
 	 */
 	public VideoSplitter(String videoFilePath, String saveLocation){
-		this.saveLocation = saveLocation;
 		this.videoFilePath = videoFilePath;
+		this.saveLocation = saveLocation;
 	}
 	
 	/**
@@ -105,11 +104,20 @@ public class VideoSplitter {
 	 * @param picture
 	 */
 	private void saveFrameToGoogleCloud(MediaPicture picture, MediaPictureConverter converter){
-		if(framesProcessed % 10 == 0){
+		if(framesProcessed % 60 == 0){
 			BufferedImage image = null; 
 			image = converter.toImage(image, picture);
-			
-			//TODO @dash102 - write images to google cloud
+				
+			try{
+				File file = new File(saveLocation + "\\frame" + framesProcessed + ".png");
+				ImageIO.write(image, "png", file);
+				//DetectText.uploadFile(file, "bucket-caption");
+				// Upload images to Google Cloud Storage
+				
+			}
+			catch(IOException ex){
+				
+			}
 		}
 		++framesProcessed;
 	}
