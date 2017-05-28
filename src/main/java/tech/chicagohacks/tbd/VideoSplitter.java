@@ -111,7 +111,7 @@ public class VideoSplitter {
 			try{
 				File file = new File(saveLocation + "\\frame" + framesProcessed + ".png");
 				ImageIO.write(image, "png", file);
-				DetectText.uploadFile(file, "bucket-caption");
+				//DetectText.uploadFile(file, "bucket-caption");
 				// Upload images to Google Cloud Storage
 				
 			}
