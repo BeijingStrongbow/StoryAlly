@@ -27,3 +27,25 @@
 a {
 	text-decoration: none;
 }
+
+#searchBox {
+	border: none;
+	outline: none;
+	border-radius: 2px;
+}
+
+#searchButton {
+	border: none;
+	outline: none;
+	border-radius: 2px;
+	background-color: transparent;
+	font-weight: bold;
+}
+
+.highlight {
+	background-color: yellow;
+}
+
+.noHighlight {
+	background-color: transparent;
+}

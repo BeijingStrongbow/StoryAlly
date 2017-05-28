@@ -79,10 +79,11 @@
 		}
 		function addStories() {
 		    database.ref("Stories/").push({
-			    title: "F",
+			    title: "Fish are always fishy",
 			    story: "text text text text \nasdf asdf asdf asdf"
 		    });
 		}	
+		//addStories();
 		function getStories() {
 			setTimeout(function() {
 				var getRef = database.ref("Stories/");
@@ -100,7 +101,7 @@
 				for(var i = 0; i < spot; i++) {
 					$("#toAppendStories").append("<div class='w3-col m3'><a class='clickMe' id='a" + i + "'>" + titles[i] + "</a></div>")
 				}
-			}, 500);
+			}, 700);
 		}
 		function checkURL() {
 			var reader = new XMLHttpRequest();
@@ -124,6 +125,34 @@
 		});
 		getStories();
 		
+		function search() {
+			//for(var i = 0; i < spot; i++) {
+				/*var inputText = document.getElementById("a" + i);
+				var innerHTML = inputText.innerHTML;
+				var index = innerHTML.indexOf("<span class='highlight'>");
+				var index2 = innerHTML.indexOf("</span>");
+				if (index >= 0 && index2 >= 0) { 
+					innerHTML = innerHTML.substring(0, index) + innerHTML.substring(index + 24, index2) + innerHTML.substr(index2 + 7);
+					inputText.innerHTML = innerHTML;
+				}*/
+				$("span").contents().unwrap();
+				$("a").show();
+			//}
+			
+			var text = searchBox.value;
+			for(var i = 0; i < spot; i++) {
+				var inputText = document.getElementById("a" + i);
+				var innerHTML = inputText.innerHTML;
+				var index = innerHTML.indexOf(text);
+				if (index >= 0) { 
+					innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
+					inputText.innerHTML = innerHTML;
+				} else {
+					$("#a" + i).hide();
+				}
+			}
+		}
+		
 	</script>
 
 <style>
@@ -144,7 +173,7 @@ body, html {
 
 /* First image (Logo. Full height) */
 .bgimg-1 {
-    background-image: url('images/volkan-olmez-523.jpg');
+    background-image: url('images/andrew-collins-178963.jpg');
     min-height: 100%;
 }
 
@@ -215,7 +244,10 @@ body, html {
 <div class="w3-content w3-container w3-padding-64" id="portfolio">
   <h3 class="w3-center">Collection</h3>
   <p class="w3-center"><em>Here are some of the latest stores submitted by users</em></p><br>
-
+  <center>
+	  <input type="text" placeholder="Look for a certain story" name="searchBox" id="searchBox">
+	  <button id="searchButton" onClick="search()">Go</button>
+  </center>
   <!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
   <div class="w3-row-padding w3-center w3-section" id="toAppendStories">
 
