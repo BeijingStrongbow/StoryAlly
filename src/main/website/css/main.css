@@ -12,6 +12,18 @@
 	opacity: .75;
 	color: #000;
 }
+#yourEmail {
+	background-color: #777;
+	outline: none;
+	border: none;
+	border-radius: 2px;
+	width: 700px;
+	height: 50px;
+	font-size: 26px;
+	opacity: .75;
+	color: #000;
+	margin-top: 3px;
+}
 
 #sendLink {
 	background-color: #fff;
@@ -48,4 +60,14 @@ a {
 
 .noHighlight {
 	background-color: transparent;
+}
+
+#myProgress {
+    width: 100%;
+    background-color: #777;
+}
+#myBar {
+    width: 1%;
+    height: 10px;
+    background-color: #000;
 }

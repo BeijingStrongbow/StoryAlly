@@ -27,6 +27,17 @@
 		var stories = [8];
 		var titles = [8];
 		var spotToUse = 0;
+		var progress = 0;
+		$(document).ready(function() {
+			$('#myProgress').hide();
+		});
+		setTimeout(function() {
+			var getRef1 = database.ref("Link/");
+			getRef1.on('child_changed', function(snapshot) {
+				progress = snapshot.val();
+				$('#myBar').css('width', progress + "%");
+			});
+		}, 1000);
 		function changePlaceholder() {
 			setTimeout(function() {
 				var getRef = database.ref("Link/").once('value').then(function(snapshot) {
@@ -35,12 +46,22 @@
 			}, 6000);
 		}
 		function sendLink() {
+			var email = yourEmail.value;
 			var linkToSend = insertLink.value;
-			database.ref("Link/").set({link:linkToSend});
-			$("#insertLink").val('');
-			$("#insertLink").attr("placeholder", "Loading");
-			loading();
-			changePlaceholder();
+			if(email.length >= 0 && linkToSend.length >= 0) {
+				database.ref("Link/").set({link:linkToSend,progress:1,email:email});
+				$("#insertLink").val('');
+				$("#insertLink").attr("placeholder", "Loading");
+				$('#myProgress').show();
+				loading();
+				changePlaceholder();	
+			} else if(email.length == 0) {
+				alert("Please enter your email adress");
+			} else if(linkToSend.length == 0) {
+				alert("Please enter a url of a video");
+			} else {
+				alert("Please make sure that you have filled out both text fields correctly");
+			}
 		}
 		function loading() {
 			setTimeout(function() {
@@ -123,6 +144,7 @@
 			localStorage.setItem('story', stories[theIdToSend]);
 			document.location.href = "story.html";
 		});
+		
 		getStories();
 		
 		function search() {
@@ -217,8 +239,13 @@ body, html {
 <!-- First Parallax Image with Logo Text -->
 <div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
   <div class="w3-display-middle" style="white-space:nowrap;">
+    <div id="myProgress">
+       <div id="myBar"></div>
+	</div>
     <form>
-    	<input type="text" placeholder="Insert link" name="insertLink" id="insertLink">
+		<input type="text" placeholder="Insert link" name="insertLink" id="insertLink"> 
+   	<br>
+    	<input type="text" placeholder="Your email" name="yourEmail" id="yourEmail">
     </form>
     <center>
     	<button onClick="sendLink()" id="sendLink">Submit</button>
