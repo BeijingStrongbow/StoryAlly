@@ -62,7 +62,6 @@ public class App {
 				DetectText.uploadFile(child, "bucket-caption");
 				DetectText.detectTextGcs("gs://bucket-caption/" + child.getName(), out);
 				//System.out.println(child.getPath());
-			    out.println();
 			}
 			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
 		} catch (IOException e) {

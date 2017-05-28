@@ -104,7 +104,7 @@ public class VideoSplitter {
 	 * @param picture
 	 */
 	private void saveFrameToGoogleCloud(MediaPicture picture, MediaPictureConverter converter){
-		if(framesProcessed % 60 == 0){
+		if(framesProcessed % 150 == 0){
 			BufferedImage image = null; 
 			image = converter.toImage(image, picture);
 				
