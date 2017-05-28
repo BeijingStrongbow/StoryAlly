@@ -44,6 +44,7 @@
     	<artifactId>humble-video-all</artifactId>
     	<version>0.2.1</version>
     </dependency>
+<<<<<<< Updated upstream
     
     	    <dependency>
 		  <groupId>com.google.cloud</groupId>
@@ -63,16 +64,7 @@
 		    <artifactId>commons-cli</artifactId>
 		    <version>1.2</version>
 		</dependency>
-		<dependency>
-  			<groupId>com.google.firebase</groupId>
-  			<artifactId>firebase-admin</artifactId>
-  			<version>5.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.axet</groupId>
-			<artifactId>vget</artifactId>
-			<version>1.1.33</version>
-		</dependency>
+		
 	    
 	    <!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage -->
 		<dependency>
@@ -80,6 +72,8 @@
 		    <artifactId>google-cloud-storage</artifactId>
 		    <version>1.0.2</version>
 		</dependency>
+		
+		
 		<dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-logging</artifactId>
@@ -162,5 +156,17 @@
 
         <!-- web -->
 
+=======
+    <dependency>
+    	<groupId>com.github.axet</groupId>
+    	<artifactId>vget</artifactId>
+    	<version>1.1.33</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.firebase</groupId>
+    	<artifactId>firebase-admin</artifactId>
+    	<version>5.0.0</version>
+    </dependency>
+>>>>>>> Stashed changes
   </dependencies>
 </project>
