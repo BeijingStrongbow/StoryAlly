@@ -1,0 +1,146 @@
+package tech.chicagohacks.tbd;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import io.humble.video.Decoder;
+import io.humble.video.Demuxer;
+import io.humble.video.DemuxerStream;
+import io.humble.video.MediaDescriptor;
+import io.humble.video.MediaPacket;
+import io.humble.video.MediaPicture;
+import io.humble.video.awt.MediaPictureConverter;
+import io.humble.video.awt.MediaPictureConverterFactory;
+
+/**
+ * Splits an mp4 video into individual frames. As of now it only saves every 10 frames.
+ * 
+ * @author Eric
+ */
+public class VideoSplitter {
+<<<<<<< Updated upstream
+	
+	private String saveLocation;
+=======
+		
+>>>>>>> Stashed changes
+	private String videoFilePath;
+	
+	/**
+	 * Initialize this VideoSplitter with a video path and a location to save the frames.
+	 * @param videoFilePath
+	 * @param saveLocation
+	 */
+<<<<<<< Updated upstream
+	public VideoSplitter(String videoFilePath, String saveLocation){
+=======
+	public VideoSplitter(String videoFilePath){
+>>>>>>> Stashed changes
+		this.videoFilePath = videoFilePath;
+		this.saveLocation = saveLocation;
+	}
+	
+	/**
+	 * Splits the video into frames
+	 */
+	public void splitIntoFrames() throws IOException, InterruptedException{
+		Demuxer demuxer = Demuxer.make();
+		demuxer.open(videoFilePath, null, false, true, null, null);
+		int numberOfStreams = demuxer.getNumStreams();
+		
+		int streamId;
+		boolean foundStream = false;
+		Decoder videoDecoder = null;
+		DemuxerStream stream;
+		
+		for(streamId = 0; streamId < numberOfStreams; streamId++){
+			stream = demuxer.getStream(streamId);
+			videoDecoder = stream.getDecoder();
+			
+			if(videoDecoder != null && videoDecoder.getCodecType() == MediaDescriptor.Type.MEDIA_VIDEO){
+				foundStream = true;
+				break;
+			}
+		}
+		
+		if(!foundStream){
+			System.out.println("No stream was found in " + videoFilePath);
+			return;
+		}
+		
+		videoDecoder.open(null, null);
+		
+		final MediaPicture frame = MediaPicture.make(videoDecoder.getWidth(), videoDecoder.getHeight(), videoDecoder.getPixelFormat());
+		final MediaPictureConverter converter = MediaPictureConverterFactory.createConverter(MediaPictureConverterFactory.HUMBLE_BGR_24, frame);
+		
+		final MediaPacket packet = MediaPacket.make();
+
+		int offset;
+		int bytesRead;
+		
+		while(demuxer.read(packet) >= 0){
+			if(packet.getStreamIndex() == streamId){
+				offset = 0;
+				bytesRead = 0;
+				
+				do{
+					bytesRead += videoDecoder.decode(frame, packet, offset);
+					if(frame.isComplete()){
+						saveFrameToGoogleCloud(frame, converter);
+					}
+					
+					offset += bytesRead;
+				}while(offset < packet.getSize());
+			}
+		}
+		
+		do{
+			videoDecoder.decode(frame, null, 0);
+
+			if(frame.isComplete()){
+				saveFrameToGoogleCloud(frame, converter);
+			}
+		} while(frame.isComplete());
+		
+		demuxer.close();
+	}
+	
+	private int framesProcessed = 0;
+	
+	/**
+	 * Writes the frame contained in the MediaPicture to Google Cloud
+	 * @param picture
+	 */
+	private void saveFrameToGoogleCloud(MediaPicture picture, MediaPictureConverter converter){
+		if(framesProcessed % 150 == 0){
+			BufferedImage image = null; 
+			image = converter.toImage(image, picture);
+<<<<<<< Updated upstream
+				
+			try{
+				File file = new File(saveLocation + "\\frame" + framesProcessed + ".png");
+				ImageIO.write(image, "png", file);
+				DetectText.uploadFile(file, "bucket-caption");
+				// Upload images to Google Cloud Storage
+				
+=======
+			try{
+				ImageIO.write(image, "png", new File("resources\\frames\\frame" + framesProcessed + ".png"));
+
+>>>>>>> Stashed changes
+			}
+			catch(IOException ex){
+				
+			}
+<<<<<<< Updated upstream
+=======
+			//TODO @dash102 - write images to google cloud
+>>>>>>> Stashed changes
+		}
+		++framesProcessed;
+	}
+	
+}
