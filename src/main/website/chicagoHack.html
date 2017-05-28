@@ -122,6 +122,10 @@
 		function appendStories() {
 			setTimeout(function() {
 				for(var i = 0; i < spot; i++) {
+					
+					if(titles[i].toString().length >= 20) {
+						titles[i] = titles[i].toString().substring(0, 19) + "...";
+					}
 					$("#toAppendStories").append("<div class='w3-col m3'><a class='clickMe' id='a" + i + "'>" + titles[i] + "</a></div>")
 				}
 			}, 700);
