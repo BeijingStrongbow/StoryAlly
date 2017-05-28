@@ -43,6 +43,9 @@ public class VideoSplitter {
 		demuxer.open(videoFilePath, null, false, true, null, null);
 		int numberOfStreams = demuxer.getNumStreams();
 		
+		File me = new File(videoFilePath);
+		fileSize = me.length();
+		
 		int streamId = -1;
 		long streamStartTime = 0;
 		Decoder videoDecoder = null;
@@ -99,6 +102,8 @@ public class VideoSplitter {
 	
 	private int framesProcessed = 0;
 	
+	private long fileSize;
+	
 	/**
 	 * Writes the frame contained in the MediaPicture to Google Cloud
 	 * @param picture
@@ -107,10 +112,13 @@ public class VideoSplitter {
 		if(framesProcessed % 60 == 0){
 			BufferedImage image = null; 
 			image = converter.toImage(image, picture);
-				
+			
 			try{
 				File file = new File(saveLocation + "\\frame" + framesProcessed + ".png");
 				ImageIO.write(image, "png", file);
+				
+				App.getFirebaseConnection().addProgress((int) (file.length() / fileSize * 0.4));
+				
 				//DetectText.uploadFile(file, "bucket-caption");
 				// Upload images to Google Cloud Storage
 				

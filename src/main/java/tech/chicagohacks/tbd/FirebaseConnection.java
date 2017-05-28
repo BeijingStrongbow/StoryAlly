@@ -20,7 +20,7 @@ public class FirebaseConnection {
 	private DatabaseReference readLinkRef;
 		
 	private DatabaseReference pushVideoDataRef;
-	
+		
 	private String email;
 	
 	public FirebaseConnection(String databaseUrl){
@@ -48,7 +48,7 @@ public class FirebaseConnection {
 		readLinkRef = FirebaseDatabase.getInstance().getReference("Link");
 
 		pushVideoDataRef = FirebaseDatabase.getInstance().getReference("Stories");
-		
+				
 		readLinkRef.addValueEventListener(new ValueEventListener(){
 
 			public void onCancelled(DatabaseError arg0) {}
@@ -74,5 +74,20 @@ public class FirebaseConnection {
 	
 	public void writeUrlError(){
 		readLinkRef.setValue("Invalid URL");
+	}
+	
+	public void addProgress(final int increment){
+		readLinkRef.addListenerForSingleValueEvent(new ValueEventListener(){
+
+			@Override
+			public void onCancelled(DatabaseError arg0) {}
+
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				int value = (Integer) snapshot.child("progress").getValue();
+				value += increment;
+				readLinkRef.child("progress").setValue(value);
+			}	
+		});
 	}
 }
