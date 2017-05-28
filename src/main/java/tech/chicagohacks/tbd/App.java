@@ -1,6 +1,7 @@
 package tech.chicagohacks.tbd;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -63,14 +64,33 @@ public class App {
 			for(File child : f.listFiles()) {
 				DetectText.uploadFile(child, "bucket-caption");
 				DetectText.detectTextGcs("gs://bucket-caption/" + child.getName(), out);
+				out.println();
 			}
+			
 			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
 		} catch (IOException e) {
 			System.out.println("Uploading and detecting text did not work");
 		}
     	//String story = "test meme asdf haha";
     	String story = "";
+    	String current = "";
+    	BufferedReader br = null;
+    	try {
+			br = new BufferedReader(new FileReader("resources\\out.txt"));
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
+    	try {
+			while ((current = br.readLine()) != null) {
+				story = story + current + "</br>";
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	firebase.pushVideoData(getVideoTitle(videoFile.getName()), story);
     }

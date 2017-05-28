@@ -68,7 +68,7 @@ public class DetectText {
 
 	}
 	
-	public static void detectTextGcs(String gcsPath, PrintStream out) throws IOException {
+	public static void detectTextGcs(String gcsPath, List<String> output) throws IOException {
 		List<AnnotateImageRequest> requests = new ArrayList<>();
 		ImageSource imgSource = ImageSource.newBuilder().setImageUri(gcsPath).build();
 		
@@ -85,7 +85,7 @@ public class DetectText {
 		
 		for (AnnotateImageResponse res : responses) {
 			if (res.hasError()) {
-			  out.printf("Error: %s\n", res.getError().getMessage());
+			  //output.add("Error: %s\n", res.getError().getMessage());
 			  return;
 			}
 	
@@ -97,7 +97,7 @@ public class DetectText {
 					if (count > 1 && !(annotation.getBoundingPoly().getVertices(3).getY() < temp + 5) && (annotation.getBoundingPoly().getVertices(3).getY() > temp - 5)) {
 						//out.println();
 					}
-					out.printf("%s ", annotation.getDescription());
+					output.add(annotation.getDescription() + " ");
 					/*out.printf("Position : %s\n", annotation.getBoundingPoly());
 					out.println();*/
 					
@@ -105,7 +105,6 @@ public class DetectText {
 					temp = annotation.getBoundingPoly().getVertices(3).getY();
 				}
 				count++;
-				System.out.println();
 				
 			}
 		}

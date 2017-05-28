@@ -17,9 +17,11 @@ import com.google.firebase.database.ValueEventListener;
 
 public class FirebaseConnection {
 	
-	private DatabaseReference readVideoUrlRef;
-	
+	private DatabaseReference readLinkRef;
+		
 	private DatabaseReference pushVideoDataRef;
+	
+	private String email;
 	
 	public FirebaseConnection(String databaseUrl){
 	
@@ -43,18 +45,21 @@ public class FirebaseConnection {
 			return;
 		}
 	
-		readVideoUrlRef = FirebaseDatabase.getInstance().getReference("Link").child("link");
+		readLinkRef = FirebaseDatabase.getInstance().getReference("Link");
 
 		pushVideoDataRef = FirebaseDatabase.getInstance().getReference("Stories");
 		
-		readVideoUrlRef.addValueEventListener(new ValueEventListener(){
+		readLinkRef.addValueEventListener(new ValueEventListener(){
 
 			public void onCancelled(DatabaseError arg0) {}
 
 			public void onDataChange(DataSnapshot snapshot) {
-				String url = (String) snapshot.getValue();
+				String url = (String) snapshot.child("link").getValue();
+				email = (String) snapshot.child("email").getValue();
 				System.out.println(url);
+				
 				App.setVideoUrl(url);
+				//App.setVideoUrl("https://www.youtube.com/watch?v=Vd3K03LaW5U");
 			}
 		});
 	}
@@ -64,9 +69,10 @@ public class FirebaseConnection {
 		DatabaseReference newStory = pushVideoDataRef.child(newStoryKey);
 		newStory.child("title").setValue(title);
 		newStory.child("story").setValue(story);
+		newStory.child("email").setValue(email);
 	}
 	
 	public void writeUrlError(){
-		readVideoUrlRef.setValue("Invalid URL");
+		readLinkRef.setValue("Invalid URL");
 	}
 }
