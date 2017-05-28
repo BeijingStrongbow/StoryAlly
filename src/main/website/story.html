@@ -7,8 +7,10 @@
 <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
 <script type="text/javascript">
 	var text = localStorage.getItem('story');
+	var theEmail = localStorage.getItem('email');
 	$(document).ready(function() {
 		$("#storyHolder").append("<p id='storyText'>" + text + "</p>");
+		document.getElementById("toEmail").value = theEmail;
 	});
 </script>
 <style type="text/css">
@@ -17,12 +19,112 @@
 		color: #777;
 		font-size: 18px;
 	}	
+	body {
+	  font-family: arial;
+	  font-size: 12px;
+	  color: #666;
+	}
+	form {
+	  width: 500px;
+	  background: white;
+	  padding: 20px 25px;
+	  margin: auto;
+	  margin-top: 30px;
+	  box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+	}
+	form input,
+	form textarea {
+	  font: inherit;
+	  padding: 5px 5px;
+	  width: 100%;
+	  margin-top: 3px;
+	  margin-bottom: 15px;
+	  box-sizing: border-box;
+	}
+	form button {
+	  border: 1px solid rgba(0,0,0,0.2);
+	  padding: 8px 35px;
+	  font-size: 12px;
+	  background: #888;
+	  color: white;
+	}
+	form label {
+	  color: #777;
+	  font-size: 11px;
+	  margin-bottom: 2px;
+	  display: block;
+	}
+	form:after {
+	  content: '';
+	  position: absolute;
+	  left: 3px;
+	  top: 3px;
+	  right: 3px;
+	 box-shadow: 0px 2px 3px rgba(0,0,0,0.2);
+	  text-shadow: 1px 1px white;
+	  font-size: 11px;
+	 padding: 18px;
+	  text-align: center;
+	  box-sizing: border-box;
+	  margin-top: -100px;
+	  transition: all .3s;
+	}
+	form.emailjs-success:after,
+	form.emailjs-sending:after,
+	form.emailjs-error:after {
+	  margin-top: 0;
+	  transition: all .3s;
+	}
+	form.emailjs-sending:after {
+	  content: 'Sending email...';
+	  background: #eee;
+	}
+	form.emailjs-success:after {
+	  content: 'Email sent!';
+	  background: #1B5E20;
+	  color: white;
+	  text-shadow: -1px -1px black;
+	}
+	form.emailjs-error:after {
+	  content: 'Error sending email';
+	  background: #B71C1C;
+	  color: white;
+	  text-shadow: -1px -1px black;
+	}
+	
+	#sendAnEmailText {
+		font-size: 28px;
+	}
 </style>
+
+<script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init("user_h9BWDbBSIN40Rm5ERva4a");
+   })();
+</script>
+
+
 </head>
 
 <body>
 	<center>
 		<div id="storyHolder"></div>
+		<p id="sendAnEmailText">Send an email to the uploader</p>
 	</center>
+	<form id="myform" onsubmit="emailjs.sendForm('default_service', 'chicagohack', this); return false;" method="post">
+		<label>toEmail</label>
+		<input type="text" name="toEmail" id="toEmail"/>
+		<label>name</label>
+		<input type="text" name="name" />
+		<label>email</label>
+		<input type="text" name="email" />
+		<label>message</label>
+		<input type="text" name="message" />
+		<br><br>
+		<button>
+		Send
+		</button>
+	</form>
 </body>
 </html>

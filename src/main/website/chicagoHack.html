@@ -26,6 +26,7 @@
 		var spot = 0;
 		var stories = [8];
 		var titles = [8];
+		var emails = [8];
 		var spotToUse = 0;
 		var progress = 0;
 		$(document).ready(function() {
@@ -111,6 +112,7 @@
 				getRef.on('child_added', function(snapshot) {
 					stories[spot] = snapshot.val().story;
 					titles[spot] = snapshot.val().title;
+					emails[spot] = snapshot.val().email;
 					spot++;
 				});
 			}, 0);
@@ -142,6 +144,7 @@
 			var theIdChar = theId.charAt(1);
 			var theIdToSend = parseInt(theIdChar);
 			localStorage.setItem('story', stories[theIdToSend]);
+			localStorage.setItem('email', emails[theIdToSend]);
 			document.location.href = "story.html";
 		});
 		
@@ -256,7 +259,7 @@ body, html {
 <!-- Container (About Section) -->
 <div class="w3-content w3-container w3-padding-64" id="about">
   <h3 class="w3-center">ABOUT US</h3>
-  <p>We have created a fictional "personal" website/blog, and our fictional character is a hobby photographer. Lorem ipsum dolor sit ameLorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam euismod commodo urna ornare mollis. Fusce in posuere turpis. Sed quis ex et ex tempus cursus in lobortis ipsum. Vestibulum sit amet nibh vel neque molestie cursus. Donec a tempus ex, eget tempus dui. Mauris consequat sagittis justo, eget efficitur enim vestibulum ultrices. Maecenas tristique vel nulla vitae imperdiet. Curabitur posuere, nulla at venenatis consectetur, neque ante molestie lacus, non varius nulla sapien a mauris. Nam porttitor velit felis, auctor dapibus ante vestibulum non. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer sit amet viverra ex, at maximus nisi. Nam ex urna, euismod id quam non, aliquet pulvinar metus. Donec dui turpis, feugiat quis leo non, semper lobortis elit.</p>
+  <p>Story Ally is a platform that allows users to submit notecard confessions to a happy computer that finds text on the notecards and makes it accessible. Our mission is to help strengthen mental health. We do this by providing a safe place for both creators and readers to view stories from people all around the world and learn about thier struggles/recoveries. Hearing other people's stories can make people feel better about their own situations by knowing that there are other people out there that have been thgough a similar thing as them. If can be very liberating to see when someone recovers from a hardship in their life by showing you that there is hope.</p>
   
 </div>
 
