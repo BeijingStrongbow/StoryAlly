@@ -4,21 +4,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.services.sqladmin.SQLAdmin;
-import com.google.api.services.sqladmin.SQLAdminScopes;
-
-import com.google.api.client.googleapis.compute.ComputeCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-
-public class App 
-{
+public class App {
 	
 	private static FirebaseConnection firebase;
 			
@@ -67,7 +56,22 @@ public class App
     	}
     	
     	//process the story
-    	String story = "test meme asdf haha";
+    	
+    	try {
+    		PrintStream out = new PrintStream("resources\\out.txt");
+			final File f = new File("resources\\frames");
+			for(File child : f.listFiles()) {
+				DetectText.uploadFile(child, "bucket-caption");
+				DetectText.detectTextGcs("gs://bucket-caption/" + child.getName(), out);
+			}
+			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
+		} catch (IOException e) {
+			System.out.println("Uploading and detecting text did not work");
+		}
+    	//String story = "test meme asdf haha";
+    	String story = "";
+    	
+    	
     	firebase.pushVideoData(getVideoTitle(videoFile.getName()), story);
     }
     
@@ -104,16 +108,7 @@ public class App
     		}
     	}
     	
-    	/*try {
-    		PrintStream out = new PrintStream("resources\\out.txt");
-			final File file = new File("resources\\frames");
-			for(File child : file.listFiles()) {
-				//DetectText.uploadFile(child, "bucket-caption");
-				//DetectText.detectTextGcs("gs://bucket-caption/" + child.getName(), out);
-			}
-			//DetectText.detectTextGcs("resources/caption.png", new PrintStream("resources/out.txt"));
-		} catch (IOException e) {
-			System.out.println("Uploading and detecting text did not work");
-		}*/
+    	
     }
+
 }
