@@ -62,6 +62,7 @@ public class DetectText {
 			sb.append(line).append("\n"); 
 			line = buf.readLine(); 
 		} 
+		buf.close();
 		String fileAsString = sb.toString(); 
 		return fileAsString;
 
